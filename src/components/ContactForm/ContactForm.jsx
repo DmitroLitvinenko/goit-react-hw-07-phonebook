@@ -2,7 +2,8 @@ import { Field, Formik } from 'formik';
 import * as yup from 'yup';
 import { Form, Button, ErrorMessage } from './ContactForm.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact, getContacts } from 'redux/contactsSlice';
+import { Notify } from 'notiflix';
+import { addContact } from 'api/api';
 
 const validationSchema = yup.object().shape({
   name: yup
@@ -28,18 +29,24 @@ const initialValues = {
 
 export const ContactForm = () => {
   const dispatch = useDispatch();
-  const contacts = useSelector(getContacts);
+  const contacts = useSelector(state => state.contacts.items);
 
   const handlerSubmit = (values, actions) => {
-    const handlerAddContact = () => dispatch(addContact(values));
+    const isDuplicate = contacts.some(contact => contact.name === values.name);
 
-    const overlap = contacts.map(({ name }) => name).includes(values.name);
-
-    overlap
-      ? alert(`${values.name} is already in contacts`)
-      : handlerAddContact();
-
-    actions.resetForm();
+    if (isDuplicate) {
+      Notify.info(`${values.name} is already in contacts`);
+      actions.resetForm();
+    } else {
+      dispatch(addContact(values))
+        .unwrap()
+        .then(() => {
+          actions.resetForm();
+        })
+        .catch(error => {
+          Notify.error('An error occurred while adding the contact.');
+        });
+    }
   };
 
   return (
