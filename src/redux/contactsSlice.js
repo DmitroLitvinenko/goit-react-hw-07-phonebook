@@ -1,5 +1,6 @@
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import { addContact, fetchContacts, removeContact } from 'api/api';
+import { Notify } from 'notiflix';
 import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
@@ -14,12 +15,12 @@ const handleFulfilled = (state, action) => {
 const handleFulfilledAddContact = (state, action) => {
   state.isLoading = false;
   state.items.push(action.payload);
-  state.error = '';
+  Notify.success('Contact added successfully');
 };
 const handleFulfilledRemoveContact = (state, action) => {
   state.isLoading = false;
-  state.items = state.items.filter(contact => contact.id !== action.payload.id);
-  state.error = '';
+  state.items = state.items.filter(contact => contact.id !== action.payload);
+  Notify.success('Contact removed successfully');
 };
 
 const handleRejected = (state, action) => {

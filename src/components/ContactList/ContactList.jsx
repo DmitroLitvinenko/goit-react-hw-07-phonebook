@@ -3,7 +3,6 @@ import { ContactContainer, List, ListContainer } from './ContactList.styled';
 import { useDispatch, useSelector } from 'react-redux';
 import { getFilter } from 'redux/filterSlice';
 import { Button } from 'components/ContactForm/ContactForm.styled';
-import {} from 'redux/contactsSlice';
 import { useEffect } from 'react';
 import { fetchContacts, removeContact } from 'api/api';
 
